@@ -138,6 +138,11 @@ function movePieceTo(square) {
     } else {
         $(square).html("<img src = \"assets/blackChecker.gif\" class = \"checker\" id = \"blackPiece\"></img>");
     }
+	//kinda hamfisted, but works for now
+	$('.checker').css({'width':'80%',
+		'margin-left':'10%',
+		'margin-right':'10%',
+		'margin-top':'10%'});
     endTurn();
     deselectPiece(selected);
     $(selected).parent().html("");
