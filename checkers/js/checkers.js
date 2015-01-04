@@ -1,10 +1,11 @@
-var turn = 'red';
+var turn = 'redPiece',
+currentPiece;
 
 function endTurn() {
-	if (turn === 'red') {
-		turn = 'black';
-	] else {
-		turn = 'red';
+	if (turn === 'redPiece') {
+		turn = 'blackPiece';
+	} else {
+		turn = 'redPiece';
 	}
 }
 
@@ -40,25 +41,12 @@ function makeSquare() {
     $('.cell').css('height',width);
 }
 
-function checkerLocation(checker) {
-	 'use strict';
-    var raw = $(checker).parent().attr('class'),
-        x,
-        y,
-        color = $(checker).attr('id');
-    raw = raw.split(" ");
-    x = (raw[1].split(""))[3];
-    y = (raw[2].split(""))[3];
-
-    canMoveTo(x,y,color);
-}
-
 function movePiece() {
-	 'use strict';
+	'use strict';
     
 }
 
-function canMoveTo(x,y,color) {
+function canMoveTo(piece,x,y,color) {
 	 'use strict';
 
 //convert x and y to integers
@@ -78,6 +66,30 @@ function canMoveTo(x,y,color) {
     console.log("Can move to : " + (possibleMoves[0])  + " or " + possibleMoves[1] + ".");
 }
 
+function highlight(checker) {
+	'use strict';
+	var x,
+    y,
+    raw = ($(checker).parent().attr('class')).split(" "),
+	color = $(checker).attr('id'),
+	possibleMoves=[];
+	
+    x = ((raw[1].split(""))[3]) - 0;
+    y = ((raw[2].split(""))[3]) - 0;
+	if(color === "redPiece") {
+        (y-1) >= 0 ?  possibleMoves.push([x-1,y-1]) : false;
+        (y+1) <= 7 ? possibleMoves.push([x-1,y+1]) : false; 
+    } else {
+        (y-1) >= 0 ?  possibleMoves.push([x+1,y-1]) : false;
+        (y+1) <= 7 ? possibleMoves.push([x+1,y+1]) : false; 
+    }
+	$('.row'+possibleMoves[0][0]+'.col'+possibleMoves[0][1]).css('background-color','purple');
+    if( possibleMoves[1] != undefined) {  
+		$('.row'+possibleMoves[1][0]+'.col'+possibleMoves[1][1]).css('background-color','purple') 
+	}	
+	return possibleMoves;
+}
+
 function unhighlight(checker) {
 	 'use strict';
     var x,
@@ -91,27 +103,56 @@ function unhighlight(checker) {
     $('.row'+(x-1)+'.col'+(y-1)).css('background-color','antiquewhite');
 }
 
-function selectPiece(checker) {
+function selectPiece(selected) {
 	 'use strict';
-    var temp = $(checker);
-    temp.attr('onmouseout','');
-    temp.attr('onclick','deselectPiece(this)');
-    temp.attr('onmouseover','');
+    var temp = $(selected),
+	temp2 = $('.checker'),
+	moves;
+	if (temp.attr('id') === turn)
+	{
+		temp2.attr('onmouseover','');
+		temp2.attr('onmouseout','');
+		temp2.attr('onclick','');
+		temp.attr('onclick','deselectPiece(this)');
+		moves = highlight(selected);
+		for (var i in moves) {
+			console.log(moves[i]);
+			$('.row'+moves[i][0]+'.col'+moves[i][1]).attr('onclick',('movePieceTo(this)'));
+			currentPiece = selected;
+		}
+		
+	} else {
+		alert('Not that players turn.');
+	}
 }
 
-function deselectPiece(checker) {
+function deselectPiece(selected) {
 	 'use strict';
-    var temp = $(checker);
+	var temp = $('.checker');
     temp.attr('onmouseout','unhighlight(this)');
     temp.attr('onclick','selectPiece(this)');
-    temp.attr('onmouseover','checkerLocation(this)');
-    unhighlight(checker);
+    temp.attr('onmouseover','highlight(this)');
+	$('.cell').attr('onclick','');
+    unhighlight(selected);
+	currentPiece = "";
+}
+
+function movePieceTo (square) {
+	var selected = currentPiece;
+	if ($(selected).attr('id') === 'redPiece') {
+		$(square).html("<img src = \"assets/redChecker.gif\" class = \"checker\" id = \"redPiece\"></img>");
+	} else  {
+		$(square).html("<img src = \"assets/blackChecker.gif\" class = \"checker\" id = \"blackPiece\"></img>");
+	}
+	endTurn();
+	deselectPiece(selected);
+	$(selected).parent().html("");
 }
 
 function drawPieces() {
 	 'use strict';
-    var blackPiece = "<img src = \"assets/blackChecker.gif\" class = \"checker\" id=\"blackPiece\" onmouseover=checkerLocation(this) onmouseout=unhighlight(this) onclick = selectPiece(this)></img>",
-    redPiece = "<img src = \"assets/redChecker.gif\" class = \"checker\" id = \"redPiece\" onmouseover=checkerLocation(this) onmouseout=unhighlight(this) onclick = selectPiece(this)></img>";
+    var blackPiece = "<img src = \"assets/blackChecker.gif\" class = \"checker\" id=\"blackPiece\" onmouseover=highlight(this) onmouseout=unhighlight(this) onclick = selectPiece(this)></img>",
+    redPiece = "<img src = \"assets/redChecker.gif\" class = \"checker\" id = \"redPiece\" onmouseover=highlight(this) onmouseout=unhighlight(this) onclick = selectPiece(this)></img>";
     $('.row0#whiteSquare').html(blackPiece);
     $('.row1#whiteSquare').html(blackPiece);
     $('.row2#whiteSquare').html(blackPiece);
