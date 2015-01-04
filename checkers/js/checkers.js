@@ -1,6 +1,6 @@
 var turn = 'redPiece',
     currentPiece;
-
+	
 function endTurn() {
     'use strict';
     if (turn === 'redPiece') {
@@ -18,6 +18,7 @@ function makeSquare() {
 
 function drawBoard() {
     'use strict';
+	
     var row,
         column,
         start,
@@ -43,7 +44,12 @@ function drawBoard() {
             color = toggle(color);
         }
     }
+	$('.cell').css({
+		'width':'12.5%',
+		'float':'left'});
     makeSquare();
+	$('.cell#whiteSquare').css("background-color",'antiquewhite');
+	$('.cell#blackSquare').css("background-color",'black');
 }
 
 function highlight(checker) {
@@ -103,7 +109,7 @@ function selectPiece(selected) {
         temp2.attr('onclick', '');
         temp.attr('onclick', 'deselectPiece(this)');
         moves = highlight(selected);
-		length = moves.length;
+        length = moves.length;
         for (i = 0; i < length; i += 1) {
             $('.row' + moves[i][0] + '.col' + moves[i][1]).attr('onclick', ('movePieceTo(this)'));
             currentPiece = selected;
@@ -147,6 +153,10 @@ function drawPieces() {
     $('.row5#whiteSquare').html(redPiece);
     $('.row6#whiteSquare').html(redPiece);
     $('.row7#whiteSquare').html(redPiece);
+	$('.checker').css({'width':'80%',
+		'margin-left':'10%',
+		'margin-right':'10%',
+		'margin-top':'10%'});
 }
 
 drawBoard();
